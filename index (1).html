@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Travel Planner</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 24px auto; }
+    .row { display: flex; gap: 12px; margin-bottom: 8px; }
+    .stop { border: 1px solid #ddd; padding: 8px; margin: 8px 0; }
+    .error { color: #b00020; font-size: 0.9rem; }
+    .sr-only { position: absolute; left: -9999px; }
+  </style>
+</head>
+<body>
+  <h1>Travel Planner</h1>
+
+  <div class="row">
+    <label>Starting Point <input id="start" type="text" placeholder="Madrid" /></label>
+    <label>Destination <input id="end" type="text" placeholder="Valencia" /></label>
+  </div>
+
+  <div class="row">
+    <label>Distance (km) <input id="distance" type="number" min="0" step="0.1" placeholder="350" /></label>
+    <label>Vehicle
+      <select id="vehicle">
+        <option value="car">Car</option>
+        <option value="bus">Bus</option>
+        <option value="bike">Bike</option>
+      </select>
+    </label>
+  </div>
+
+  <button id="addStop">Add Another Stop</button>
+  <div id="stops"></div>
+
+  <button id="calc">Calculate Cost</button>
+  <div id="result" aria-live="polite"></div>
+  <div id="errors" class="error" aria-live="assertive"></div>
+
+  <script>
+    const rates = { car: 0.20, bus: 0.10, bike: 0.05 };
+    const stopsEl = document.getElementById('stops');
+    const errorsEl = document.getElementById('errors');
+    const resultEl = document.getElementById('result');
+
+    function addStopRow() {
+      const wrap = document.createElement('div');
+      wrap.className = 'stop';
+      wrap.innerHTML = `
+        <div class="row">
+          <label>Stop Name <input type="text" class="stopName" placeholder="Cuenca" /></label>
+          <label>Stop Distance (km) <input type="number" class="stopDist" min="0" step="0.1" placeholder="170" /></label>
+          <button class="remove">Remove</button>
+        </div>`;
+      wrap.querySelector('.remove').addEventListener('click', () => wrap.remove());
+      stopsEl.appendChild(wrap);
+    }
+
+    document.getElementById('addStop').addEventListener('click', addStopRow);
+
+    document.getElementById('calc').addEventListener('click', () => {
+      errorsEl.textContent = '';
+      resultEl.textContent = '';
+      const start = document.getElementById('start').value.trim();
+      const end = document.getElementById('end').value.trim();
+      const dist = parseFloat(document.getElementById('distance').value);
+      const vehicle = document.getElementById('vehicle').value;
+
+      const stopDists = [...document.querySelectorAll('.stopDist')].map(i => parseFloat(i.value));
+      const stopNames = [...document.querySelectorAll('.stopName')].map(i => i.value.trim());
+
+      // Simple validation
+      const issues = [];
+      if (!start) issues.push('Starting Point is required.');
+      if (!end) issues.push('Destination is required.');
+      if (isNaN(dist) || dist < 0) issues.push('Distance must be a non-negative number.');
+      stopDists.forEach((d, idx) => {
+        if (isNaN(d) || d < 0) issues.push(`Stop #${idx+1} distance must be non-negative.`);
+      });
+
+      if (issues.length) {
+        errorsEl.textContent = issues.join(' ');
+        return;
+      }
+
+      const totalKm = [dist, ...stopDists].reduce((a,b)=>a+b,0);
+      const cost = totalKm * rates[vehicle];
+      const stopsStr = stopNames.filter(Boolean).join(' ➜ ');
+
+      resultEl.textContent = `From ${start} to ${end}` +
+        (stopsStr ? ` via ${stopsStr}` : '') +
+        `: ${totalKm.toFixed(1)} km · ${vehicle} @ €${rates[vehicle].toFixed(2)}/km = €${cost.toFixed(2)}`;
+    });
+  </script>
+</body>
+</html>
