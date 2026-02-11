@@ -1,70 +1,44 @@
 # Playwright TypeScript Test Automation
 
-This project contains end-to-end test automation using Playwright with TypeScript.
+This project contains integration and end-to-end test automation using Playwright with TypeScript. The purpose of this repository is to demonstrate well structured test automation repository with using BE testing on API level and UI testing following best practices.
 
-## Prerequisites
-
-- Node.js (version 18 or higher)
-- npm
+### Structure
+All tests are part of the "tests" folder
+- fixtures - classes for test prerequisites used in the tests itself to create all the necessary data for the test
+- page-objets - page object models
+- services - classes for api requests structured into logic entities
+- e2e - test specifications
+- playwright.config.ts - global config file
 
 ## Installation
 
 The project is already set up with all dependencies installed. If you need to reinstall:
 
 ```bash
-npm install
+yarn install
 ```
 
-## Running Tests
+### How to run
 
-Run all tests:
-```bash
-npx playwright test
-```
+- To run tests locally, create a .env file with all necessary environment variables
 
-Run tests in UI mode:
-```bash
-npx playwright test --ui
-```
+        BASE_URL="https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod"
+        API_TOKEN=""
+        USERNAME=""
+        PASSWORD=""
 
-Run tests in a specific browser:
-```bash
-npx playwright test --project=chromium
-npx playwright test --project=firefox
-npx playwright test --project=webkit
-```
+- run the e2e tests:
 
-Run a specific test file:
-```bash
-npx playwright test tests/example.spec.ts
-```
+        yarn test:e2e
 
-Run tests in debug mode:
-```bash
-npx playwright test --debug
-```
+- run the integration tests:
 
-## Generating Tests
+        yarn test:integration
 
-Use Codegen to auto-generate tests:
-```bash
-npx playwright codegen
-```
+- or run in debug mode:
 
-## Viewing Test Reports
+        yarn test:e2e tests/ui/network.spec.ts --debug
 
-After running tests, view the HTML report:
-```bash
-npx playwright show-report
-```
+- or with UI:
 
-## Project Structure
-
-- `tests/` - Test files
-- `playwright.config.ts` - Playwright configuration
-- `.github/workflows/playwright.yml` - GitHub Actions CI workflow
-
-## Learn More
-
-- [Playwright Documentation](https://playwright.dev)
-- [TypeScript Documentation](https://www.typescriptlang.org)
+        yarn test:e2e tests/ui/network.spec.ts --ui

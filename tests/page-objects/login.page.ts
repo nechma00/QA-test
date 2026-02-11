@@ -26,12 +26,5 @@ export class LoginPage {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
-    await expect.poll(async () => {
-    const response = await this.page.request.get(`${process.env.BASE_URL}/api/Employees`);
-    return response.status();
-}, {
-  message: 'wait for employees to load',
-  timeout: 10000,
-}).toBe(200);
   }
 }

@@ -1,4 +1,4 @@
-import { test as base, request, APIRequestContext, createAPIContext } from '../fixtures/login.fixture';
+import { test as base, createAPIContext } from '../fixtures/login.fixture';
 import { BenefitsDashboard } from '../page-objects/benefitsDashboard.page';
 import { Employees, Employee } from '../services/employees.api';
 
